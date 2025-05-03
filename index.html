@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern Registration Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 420px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 5px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2575fc;
+    }
+
+    .error {
+      color: #e74c3c;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
+
+    .password-toggle {
+      cursor: pointer;
+      font-size: 0.85em;
+      color: #2575fc;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    .char-count {
+      font-size: 0.8em;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    button {
+      width: 100%;
+      background: #2575fc;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #1a5dd9;
+    }
+
+    #togglePreview {
+      margin-top: 15px;
+      background: #6a11cb;
+    }
+
+    #togglePreview:hover {
+      background: #5217a8;
+    }
+
+    #preview {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+      transition: opacity 0.5s ease;
+    }
+
+    #preview.show {
+      display: block;
+      opacity: 1;
+    }
+
+    .preview-title {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Create Account</h2>
+
+    <form id="registrationForm">
+      <label>
+        Name:
+        <input type="text" id="name">
+        <span class="error" id="nameError"></span>
+      </label>
+
+      <label>
+        Email:
+        <input type="email" id="email">
+        <span class="error" id="emailError"></span>
+      </label>
+
+      <label>
+        Password:
+        <input type="password" id="password">
+        <span class="password-toggle" id="togglePassword">Show Password</span>
+        <div class="char-count" id="charCount">0 characters</div>
+        <span class="error" id="passwordError"></span>
+      </label>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <button id="togglePreview">Toggle Preview</button>
+
+    <div id="preview">
+      <h3 class="preview-title">Live Preview</h3>
+      <p><strong>Name:</strong> <span id="previewName"></span></p>
+      <p><strong>Email:</strong> <span id="previewEmail"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    const charCount = document.getElementById('charCount');
+
+    const nameError = document.getElementById('nameError');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    const preview = document.getElementById('preview');
+    const previewName = document.getElementById('previewName');
+    const previewEmail = document.getElementById('previewEmail');
+    const toggleBtn = document.getElementById('togglePreview');
+
+    // Password show/hide
+    togglePassword.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      togglePassword.textContent = isPassword ? 'Hide Password' : 'Show Password';
+    });
+
+    // Password character count
+    passwordInput.addEventListener('input', () => {
+      charCount.textContent = `${passwordInput.value.length} characters`;
+    });
+
+    // Live preview
+    nameInput.addEventListener('input', () => {
+      previewName.textContent = nameInput.value;
+    });
+
+    emailInput.addEventListener('input', () => {
+      previewEmail.textContent = emailInput.value;
+    });
+
+    // Toggle preview section
+    toggleBtn.addEventListener('click', () => {
+      preview.classList.toggle('show');
+    });
+
+    // Form validation
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let valid = true;
+
+      nameError.textContent = '';
+      emailError.textContent = '';
+      passwordError.textContent = '';
+
+      if (nameInput.value.trim() === '') {
+        nameError.textContent = 'Name is required.';
+        valid = false;
+      }
+
+      if (!emailInput.value.includes('@')) {
+        emailError.textContent = 'Enter a valid email.';
+        valid = false;
+      }
+
+      if (passwordInput.value.length < 6) {
+        passwordError.textContent = 'Password must be at least 6 characters.';
+        valid = false;
+      }
+
+      if (valid) {
+        alert('Registration successful!');
+        form.reset();
+        previewName.textContent = '';
+        previewEmail.textContent = '';
+        charCount.textContent = '0 characters';
+        preview.classList.remove('show');
+      }
+    });
+  </script>
+
+</body>
+</html>
